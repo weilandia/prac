@@ -7,6 +7,7 @@ require_relative 'alphametics'
 # 9b8b80c
 class AlphameticsTest < Minitest::Test
   def test_solve_short_puzzle
+    skip
     expect = {
       'I' => 1, 'B' => 9, 'L' => 0
     }
@@ -36,7 +37,6 @@ class AlphameticsTest < Minitest::Test
   end
 
   def test_solve_puzzle_with_exponents
-    skip
     expect = {
       'P' => 9, 'I' => 6, 'R' => 7, 'A' => 4,
       'E' => 0

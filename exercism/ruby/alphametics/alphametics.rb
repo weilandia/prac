@@ -3,7 +3,7 @@ class Alphametics
     parse(equation)
     @equation = equation
     @chars = build_set(equation.dup)
-
+    require "pry"; binding.pry
     build_hash(brute_force_solution.map(&:to_i))
   end
 
@@ -21,7 +21,10 @@ class Alphametics
 
   def true_equation?(equation)
     initial_value, *chain = equation
+    return false if initial_value[0] == "0"
+
     chain.each_slice(2).reduce(initial_value.to_i) do |result, (operator, arg)|
+      return false if arg[0] == "0"
       result.send(operator, arg.to_i)
     end
   end
