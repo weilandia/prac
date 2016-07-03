@@ -7,7 +7,6 @@ require_relative 'alphametics'
 # 9b8b80c
 class AlphameticsTest < Minitest::Test
   def test_solve_short_puzzle
-    skip
     expect = {
       'I' => 1, 'B' => 9, 'L' => 0
     }
@@ -15,7 +14,6 @@ class AlphameticsTest < Minitest::Test
     assert_equal(expect, actual)
   end
 
-  # This test has been commented out due its long runtime.
   # def test_solve_long_puzzle
   #   skip
   #   expect = {
@@ -27,7 +25,6 @@ class AlphameticsTest < Minitest::Test
   # end
 
   def test_solve_puzzle_with_multiplication
-    skip
     expect = {
       'I' => 8, 'F' => 2, 'D' => 3, 'R' => 9,
       'O' => 1
@@ -63,7 +60,6 @@ class AlphameticsTest < Minitest::Test
   # http://ruby-doc.org/docs/ruby-doc-bundle/UsersGuide/rg/constants.html
 
   def test_bookkeeping
-    skip
     assert_equal 1, BookKeeping::VERSION
   end
 end

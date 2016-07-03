@@ -1,38 +1,37 @@
+module BookKeeping
+  VERSION = 1
+end
+
 class Alphametics
   def solve(equation)
     parse(equation)
     @equation = equation
     @chars = build_set(equation.dup)
-    require "pry"; binding.pry
-    build_hash(brute_force_solution.map(&:to_i))
+    build_char_hash(brute_force_solution.map(&:to_i))
   end
 
   def brute_force_solution
     [*'0'..'9'].permutation(@chars.length).find { |number_arr|
-      translation = build_hash(number_arr)
+      equation = eval_permutation(number_arr)
 
-      new_equation = @equation.chars.map do |char|
-        translation[char] ? translation[char] : char
-      end.join.split(' ')
-
-      true_equation?(new_equation) == true
+      true_equation?(equation) == true
     }
+  end
+
+  def eval_permutation(arr)
+    translation = build_char_hash(arr)
+
+    @equation.chars.map do |char|
+      translation[char] ? translation[char] : char
+    end.join
   end
 
   def true_equation?(equation)
-    initial_value, *chain = equation
-    return false if initial_value[0] == "0"
-
-    chain.each_slice(2).reduce(initial_value.to_i) do |result, (operator, arg)|
-      return false if arg[0] == "0"
-      result.send(operator, arg.to_i)
-    end
+    no_leading_zeros?(equation) ? eval(equation) : false
   end
 
-  def translate_equation(string_equation)
-    string_equation.split(' ').map.with_index { |char, i|
-      i.even? ? char.to_i : char
-    }
+  def no_leading_zeros?(equation)
+    equation.split(" ").each { |arg| return false if arg[0] == "0" }
   end
 
   def parse(equation)
@@ -44,7 +43,7 @@ class Alphametics
     Set.new(equation.split(''))
   end
 
-  def build_hash(number_arr)
+  def build_char_hash(number_arr)
     Hash[@chars.zip(number_arr)]
   end
 end
