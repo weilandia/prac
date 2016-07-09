@@ -30,8 +30,8 @@ class Alphametics
     no_leading_zeros?(equation) ? eval(equation) : false
   end
 
-  def no_leading_zeros?(equation)
-    equation.split(" ").each { |arg| return false if arg[0] == "0" }
+  def no_leading_zeros?(string)
+    string !~ /\b0\d+/
   end
 
   def parse(equation)
