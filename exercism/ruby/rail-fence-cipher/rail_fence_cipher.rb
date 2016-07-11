@@ -4,6 +4,10 @@ class RailFenceCipher
     get_rows(message, rows, encoding)
   end
 
+  def self.decode(encoding, rows)
+    require "pry"; binding.pry
+  end
+
   def self.get_rows(message, rows, encoding)
     chars = message.chars
     indices = select_row_indices(message.length, encoding, rows)
