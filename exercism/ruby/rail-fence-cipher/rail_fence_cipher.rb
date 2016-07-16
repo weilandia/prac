@@ -5,6 +5,10 @@ class RailFenceCipher
   end
 
   def self.decode(encoding, rows)
+    return encoding if encoding.empty?
+    slices = (encoding.length.to_f / rows).ceil
+
+    trans = encoding.chars.each_slice(slices).to_a.each {|l| l.fill(nil, slices, 0) }.transpose
     require "pry"; binding.pry
   end
 
