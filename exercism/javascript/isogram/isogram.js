@@ -1,14 +1,18 @@
-var Isogram = function(word) {
+var Isogram = function(input) {
+  this.input = input;
+
+  this.parseAndSplitInput = (string) => {
+    return string.replace(/[\*\^\'\!\_\-\s]/g, '').toLowerCase().split('');
+  };
+
+  this.unique = function(value, index, self) {
+    return self.indexOf(value) === index;
+  };
+
   this.isIsogram = () => {
-    var arr = word.replace(/[\*\^\'\!\_\-\s]/g, '').toLowerCase().split('');
-
-    var unique = function(value, index, self) {
-      return self.indexOf(value) === index;
-    };
-
-    var filter = arr.filter(unique);
-
-    return filter.length === arr.length;
+    var input = this.parseAndSplitInput(this.input);
+    var filter = input.filter(this.unique);
+    return filter.length === input.length;
   };
 };
 
