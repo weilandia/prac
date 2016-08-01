@@ -1,6 +1,6 @@
 var Isogram = function(word) {
   this.isIsogram = () => {
-    var arr = word.replace(/\W/g, '').toLowerCase().split("");
+    var arr = word.replace(/[\*\^\'\!\_\-\s]/g, '').toLowerCase().split('');
 
     var unique = function(value, index, self) {
       return self.indexOf(value) === index;
