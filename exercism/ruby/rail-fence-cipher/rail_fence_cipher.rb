@@ -1,46 +1,60 @@
+require 'pry'
 class RailFenceCipher
-  def self.encode(message, rows, encoding = [])
-    return encoding.join + message if rows == 1
-    get_rows(message, rows, encoding)
+  def self.encode(msg, rails)
+    RailFenceCipher.new(decoded_msg: msg, rails: rails).encode
   end
 
-  def self.get_rows(message, rows, encoding)
-    chars = message.chars
-    indices = select_row_indices(message.length, encoding, rows)
+  def self.decode(msg, rails)
+    RailFenceCipher.new(encoded_msg: msg, rails: rails).decode
+  end
 
-    indices.each { |i|
-      encoding << chars[i]
-      chars[i] = nil
+  attr_reader :message, :encoding, :rails
+
+  def initialize(decoded_msg: nil, encoded_msg: nil, rails:)
+    @rails = rails
+    @message = decoded_msg || []
+    @encoding = encoded_msg || empty_fence
+  end
+
+  def encode
+    current_rail = 0
+    incr = -1
+    message.each_char { |char|
+      encoding[current_rail] << char
+      incr = incr * -1 if reverse_incr(current_rail)
+      current_rail += incr
     }
 
-    message = chars.compact.join
-    encode(message, rows - 1, encoding)
+    encoding.flatten.join
   end
 
-  def self.distance_between_numbers_in_row(rows)
-    return 0 if rows <= 1
-    (rows - 1) * 2 - 1
-  end
+  def decode
+    return encoding if message_not_encoded
 
-  def self.select_row_indices(length, encoding, rows)
-    return select_top_row_indices(length, rows) if encoding.empty?
-    indices = [*0..length].select { |n| in_row?(n, rows) }
-    indices.dup.each_with_index { |element, i|
-      unless element == 0
-        indices.insert(i, element - 1)
-      end
+    slice_size = rails + (rails - 2)
+    encoding.split("").each_slice(slice_size) { |slice|
+      message << slice.each_slice(rails).to_a
     }
 
-    indices.sort
+    binding.pry
   end
 
-  def self.in_row?(index, rows)
-    factor = rows * 2 - 1
-    index % factor == 0 || index == 0
-  end
 
-  def self.select_top_row_indices(length, rows)
-    distance = distance_between_numbers_in_row(rows)
-    [*0..length].select { |n| n % (distance + 1) == 0 }
-  end
+  private
+
+    def message_not_encoded
+      encoding.length < rails || rails == 1
+    end
+
+    def reverse_incr(current_rail)
+      current_rail == max_rails_idx || current_rail == 0
+    end
+
+    def max_rails_idx
+      rails - 1
+    end
+
+    def empty_fence
+      rails.times.inject([]) { |fence| fence << [] }
+    end
 end

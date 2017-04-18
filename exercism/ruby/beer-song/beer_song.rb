@@ -1,45 +1,59 @@
+VERSION = 2
 class BeerSong
-  VERSION = 2
-  
-  def verse(current_verse)
-    stanza(current_verse)
+  def verse(n)
+    "#{bottle_count(n).capitalize} #{bottle_pluralization(n)} of beer on the wall, #{bottle_count(n)} #{bottle_pluralization(n)} of beer.\n" \
+    "#{beer_action(n)}, #{bottle_count(n - 1)} #{bottle_pluralization(n - 1)} of beer on the wall.\n"
   end
 
-  def verses(current_verse, last)
-    song = []
-    until current_verse == last - 1
-      song << stanza(current_verse)
-      song << "\n"
-      current_verse -= 1
-    end
-    song.pop
-    song.join
+  def verses(start, e)
+    [*e..start].reverse.map { |verse_num| verse(verse_num) }.join("\n")
   end
 
   def lyrics
     verses(99, 0)
   end
 
-  def next_verse(number)
-    number == 0 ? "no more" : (number - 1)
-  end
+  private
 
-  def pluralize_bottle(number)
-    number != 1 ? "bottles" : "bottle"
-  end
+    def bottle_article(n)
+      if n > 0
+        n
+      else
+        "No more"
+      end
+    end
 
-  def stanza(number)
-    return final_verse if number == 0
-    return penultimate_verse if number == 1
-    "#{number} bottles of beer on the wall, #{number} bottles of beer.\n" \
-    "Take one down and pass it around, #{next_verse(number)} #{pluralize_bottle(number - 1)} of beer on the wall.\n"
-  end
+    def bottle_count(n)
+      if n == 0
+        "no more"
+      elsif n < 0
+        "99"
+      else
+        "#{n}"
+      end
+    end
 
-  def penultimate_verse
-    "1 bottle of beer on the wall, 1 bottle of beer.\nTake it down and pass it around, no more bottles of beer on the wall.\n"
-  end
+    def bottle_pluralization(n)
+      if n == 1
+        "bottle"
+      else
+        "bottles"
+      end
+    end
 
-  def final_verse
-      "No more bottles of beer on the wall, no more bottles of beer.\nGo to the store and buy some more, 99 bottles of beer on the wall.\n"
-  end
+    def beer_action(n)
+      if n > 0
+        "Take #{direct_object(n)} down and pass it around"
+      else
+        "Go to the store and buy some more"
+      end
+    end
+
+    def direct_object(n)
+      if n == 1
+        "it"
+      else
+        "one"
+      end
+    end
 end
