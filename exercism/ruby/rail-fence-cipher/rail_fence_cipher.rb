@@ -1,60 +1,34 @@
 require 'pry'
 class RailFenceCipher
-  def self.encode(msg, rails)
-    RailFenceCipher.new(decoded_msg: msg, rails: rails).encode
-  end
+  VERSION = 1
 
-  def self.decode(msg, rails)
-    RailFenceCipher.new(encoded_msg: msg, rails: rails).decode
-  end
+  class << self
+    #mapping = [[rail, char_idx, char], ...]
+    def encode(text, rails)
+      pattern_fence = fence_map(rails, text.length)
+      mapping = pattern_fence.zip(text.chars).map(&:flatten)
+      sorted_by_rail = mapping.sort
 
-  attr_reader :message, :encoding, :rails
-
-  def initialize(decoded_msg: nil, encoded_msg: nil, rails:)
-    @rails = rails
-    @message = decoded_msg || []
-    @encoding = encoded_msg || empty_fence
-  end
-
-  def encode
-    current_rail = 0
-    incr = -1
-    message.each_char { |char|
-      encoding[current_rail] << char
-      incr = incr * -1 if reverse_incr(current_rail)
-      current_rail += incr
-    }
-
-    encoding.flatten.join
-  end
-
-  def decode
-    return encoding if message_not_encoded
-
-    slice_size = rails + (rails - 2)
-    encoding.split("").each_slice(slice_size) { |slice|
-      message << slice.each_slice(rails).to_a
-    }
-
-    binding.pry
-  end
-
-
-  private
-
-    def message_not_encoded
-      encoding.length < rails || rails == 1
+      get_chars(sorted_by_rail)
     end
 
-    def reverse_incr(current_rail)
-      current_rail == max_rails_idx || current_rail == 0
+    def decode(text, rails)
+      sorted_fence = fence_map(rails, text.length).sort
+      mapping = sorted_fence.zip(text.chars).map(&:flatten)
+      sorted_by_idx = mapping.sort_by { |map| map[1] }
+
+      get_chars(sorted_by_idx)
     end
 
-    def max_rails_idx
-      rails - 1
+    def get_chars(sorted_by_rail)
+      sorted_by_rail.map { |mapping| mapping[2] }.join
     end
 
-    def empty_fence
-      rails.times.inject([]) { |fence| fence << [] }
+    def fence_map(rails, length)
+      rail_pattern = 0.upto(rails - 1).to_a + (rails - 2).downto(1).to_a
+      text_indices = 0.upto(length).to_a
+
+      rail_pattern.cycle.first(length).zip(text_indices)
     end
+  end
 end
