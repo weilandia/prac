@@ -20,15 +20,17 @@ class RailFenceCipher
       get_chars(sorted_by_idx)
     end
 
-    def get_chars(sorted_by_rail)
-      sorted_by_rail.map { |mapping| mapping[2] }.join
-    end
+    private
 
-    def fence_map(rails, length)
-      rail_pattern = 0.upto(rails - 1).to_a + (rails - 2).downto(1).to_a
-      text_indices = 0.upto(length).to_a
+      def get_chars(sorted_mappings)
+        sorted_mappings.map { |mapping| mapping[2] }.join
+      end
 
-      rail_pattern.cycle.first(length).zip(text_indices)
-    end
+      def fence_map(rails, length)
+        rail_pattern = 0.upto(rails - 1).to_a + (rails - 2).downto(1).to_a
+        text_indices = 0.upto(length).to_a
+
+        rail_pattern.cycle.first(length).zip(text_indices)
+      end
   end
 end
