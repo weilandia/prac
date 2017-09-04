@@ -126,7 +126,6 @@ class OCRTest < Minitest::Test
   end
 
   def test_identify_10
-    skip
     text = <<-NUMBER.chomp
     _
   || |
@@ -159,17 +158,18 @@ class OCRTest < Minitest::Test
   end
 
   def test_identify_1234567890
+    skip
     text = <<-NUMBER.chomp
-    _  _
-  | _| _|
-  ||_  _|
+    _  _     _  _  _  _  _  _
+  | _| _||_||_ |_   ||_||_|| |
+  ||_  _|  | _||_|  ||_| _||_|
 
     NUMBER
     assert_equal '1234567890', OCR.new(text).convert
   end
 
   def test_identify_123_456_789
-
+    skip
     text = <<-NUMBER.chomp
     _  _
   | _| _|
