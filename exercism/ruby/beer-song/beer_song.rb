@@ -1,59 +1,118 @@
-VERSION = 2
 class BeerSong
-  def verse(n)
-    "#{bottle_count(n).capitalize} #{bottle_pluralization(n)} of beer on the wall, #{bottle_count(n)} #{bottle_pluralization(n)} of beer.\n" \
-    "#{beer_action(n)}, #{bottle_count(n - 1)} #{bottle_pluralization(n - 1)} of beer on the wall.\n"
-  end
-
-  def verses(start, e)
-    [*e..start].reverse.map { |verse_num| verse(verse_num) }.join("\n")
-  end
+  VERSION = 2
 
   def lyrics
     verses(99, 0)
   end
 
-  private
+  def verses(starting, ending)
+    starting.downto(ending).collect { |i| verse(i) }.join("\n")
+  end
 
-    def bottle_article(n)
-      if n > 0
-        n
-      else
-        "No more"
-      end
+  def verse(verse_number)
+    Verse.new(verse_number).to_s
+  end
+end
+
+class BeerSong
+  class Verse
+    attr_reader :bottle_number
+    def initialize(verse_number)
+      @bottle_number = BottleNumber.for(verse_number)
     end
 
-    def bottle_count(n)
-      if n == 0
-        "no more"
-      elsif n < 0
-        "99"
-      else
-        "#{n}"
-      end
+    def to_s
+      "#{bottle_number} of beer on the wall, ".capitalize +
+      "#{bottle_number} of beer.\n" +
+      "#{bottle_number.action} " +
+      "#{bottle_number.successor} of beer on the wall.\n"
     end
+  end
 
-    def bottle_pluralization(n)
-      if n == 1
-        "bottle"
-      else
+  private_constant :Verse
+end
+
+class BeerSong
+  class Verse
+    class BottleNumber
+      def self.for(verse_number)
+        case verse_number
+        when 0
+          BottleNumber0
+        when 1
+          BottleNumber1
+        else
+          BottleNumber
+        end.new(verse_number)
+      end
+
+      attr_reader :number
+
+      def initialize(number)
+        @number = number
+      end
+
+      def successor
+        @successor ||= BottleNumber.for(number - 1)
+      end
+
+      def to_s
+        "#{quantity} #{container}"
+      end
+
+      def action
+        "Take #{pronoun} down and pass it around,"
+      end
+
+      def quantity
+        number.to_s
+      end
+
+      def container
         "bottles"
       end
-    end
 
-    def beer_action(n)
-      if n > 0
-        "Take #{direct_object(n)} down and pass it around"
-      else
-        "Go to the store and buy some more"
-      end
-    end
-
-    def direct_object(n)
-      if n == 1
-        "it"
-      else
+      def pronoun
         "one"
       end
     end
+
+    private_constant :BottleNumber
+  end
+end
+
+class BeerSong
+  class Verse
+    class BottleNumber0 < BottleNumber
+      def successor
+        @successor ||= BottleNumber.for(99)
+      end
+
+      def action
+        "Go to the store and buy some more,"
+      end
+
+      def quantity
+        "no more"
+      end
+    end
+
+    private_constant :BottleNumber0
+  end
+end
+
+class BeerSong
+  class Verse
+    class BottleNumber1 < BottleNumber
+      def container
+        "bottle"
+      end
+
+      def pronoun
+        "it"
+      end
+    end
+
+    private_constant :BottleNumber1
+  end
 end
